@@ -1,8 +1,8 @@
-import { UNION_RAW_DATA_LOW_GAS, UNION_RAW_DATA_HIGH_GAS } from "./shared.js";
-export function display_histogram_winners(db) {
-  const winner_count_query =       `
+import { UNION_RAW_DATA_HIGH_GAS, UNION_RAW_DATA_LOW_GAS } from "./shared.js";
+export function display_histogram_winners_big_trades(db) {
+  const winners_query = `
       raw_data_filtered as (
-      select * from raw_data where executed_buy_amount != 0 or name='cowswap'
+      select * from raw_data where (executed_buy_amount != 0 or name='cowswap') and CAST(output_value_usd as INTEGER) > 100000.0
       ),
       result_count as (
       select uid, count(*) as number_of_results from raw_data_filtered group by uid
@@ -26,10 +26,10 @@ export function display_histogram_winners(db) {
       select * from winner_count 
       `;
   let rows = db.query(
-    UNION_RAW_DATA_LOW_GAS + winner_count_query,
+    UNION_RAW_DATA_LOW_GAS + winners_query,
   );
   console.log(
-    "Histogram of competition win per exchange (on bang for buck, considering gas costs, in low gas cost env):",
+    "Histogram of competition win per exchange on big orders(on bang for buck, considering gas costs, in low gas cost environment):",
   );
   let x_val = [];
   let labels = [];
@@ -39,14 +39,15 @@ export function display_histogram_winners(db) {
   }
   console.log(x_val);
   console.log(labels);
-   rows = db.query(
-    UNION_RAW_DATA_HIGH_GAS + winner_count_query,
+  rows = db.query(
+    UNION_RAW_DATA_HIGH_GAS + winners_query,
   );
+
   console.log(
-    "Histogram of competition win per exchange (on bang for buck, considering gas costs, in high gas cost env):",
+    "Histogram of competition win per exchange on big orders(on bang for buck, considering gas costs, in high gas cost environment):",
   );
- x_val = [];
-   labels = [];
+  x_val = [];
+  labels = [];
   for (let i = 0; i < rows.length; i++) {
     x_val.push(rows[i][1]);
     labels.push(rows[i][0]);

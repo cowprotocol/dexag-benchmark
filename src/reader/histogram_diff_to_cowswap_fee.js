@@ -4,7 +4,7 @@ export function display_histogram_winners_diff_to_cowswap_fee(db) {
     UNION_RAW_DATA +
       `
       raw_data_filtered as (
-      select * from raw_data where executed_buy_amount != 0 or name='cowswap'
+      select * from pre_raw_data where executed_buy_amount != 0 or name='cowswap'
       ),
       ranked_by_ouput as(
       select uid, gas_cost_usd, name,

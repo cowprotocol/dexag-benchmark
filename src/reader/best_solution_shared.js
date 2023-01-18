@@ -1,8 +1,6 @@
 import { UNION_RAW_DATA_DEX_AG_ONLY } from "./shared.js";
 export function display_histogram_shared_solutions(db) {
-  const rows = db.query(
-    UNION_RAW_DATA_DEX_AG_ONLY +
-      `
+  const winners_query = `
       raw_data_filtered as (
       select * from raw_data where executed_buy_amount != 0
       ),
@@ -22,8 +20,9 @@ export function display_histogram_shared_solutions(db) {
       select sc.uid, num_winners from solution_count sc left outer join winning_party_count on sc.uid = winning_party_count.uid  where overall_count > 2
       )
       select num_winners, count(*) from results group by num_winners
-      `,
-    [],
+      `;
+  const rows = db.query(
+    UNION_RAW_DATA_DEX_AG_ONLY + winners_query,
   );
   console.log(
     "Histogram of shared best solution between dex-ags(wihout gas cost considerations): The following histogram shows how frequently the best solution was provided by 1 dex-ag, 2 dex-ags,...",

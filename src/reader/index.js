@@ -15,7 +15,7 @@ function display_raw_data_results() {
     UNION_RAW_DATA +
       `
       raw_data_filtered as (
-      select uid, group_concat(executed_buy_amount), group_concat(output_value_usd), group_concat(name) from (select uid, executed_buy_amount, output_value_usd, name from raw_data where (executed_buy_amount!=0 or name='cowswap') ORDER BY uid, output_value_usd DESC ) group by uid
+      select uid, group_concat(executed_buy_amount), group_concat(output_value_usd), group_concat(name) from (select uid, executed_buy_amount, output_value_usd, name from pre_raw_data where (executed_buy_amount!=0 or name='cowswap') ORDER BY uid, output_value_usd DESC ) group by uid
       )
       select * from raw_data_filtered
       `,

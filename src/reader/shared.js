@@ -13,7 +13,7 @@ export const UNION_RAW_DATA_DEX_AG_ONLY = `with
         FROM paraswap
         ),`;
 export const UNION_RAW_DATA = `with 
-      raw_data as (
+      pre_raw_data as (
         SELECT *, 'ocean' as name
         FROM ocean
         UNION ALL 
@@ -28,7 +28,15 @@ export const UNION_RAW_DATA = `with
         UNION ALL
         SELECT *, 'cowswap' as name
         FROM cowswap
-        ),`;
+        ), `;
+export const UNION_RAW_DATA_HIGH_GAS = UNION_RAW_DATA + ` raw_data as (
+        select * from pre_raw_data prd inner join  parameters pa on pa.uid = prd.uid
+        where gas_price > 40
+      ),`;
+export const UNION_RAW_DATA_LOW_GAS = UNION_RAW_DATA + ` raw_data as (
+        select * from pre_raw_data prd inner join parameters pa on pa.uid = prd.uid
+        where gas_price < 15
+      ),`;
 export const COLORS = [
   "#345C7D",
   "#F7B094",
