@@ -1,6 +1,6 @@
-import { UNION_RAW_DATA_LOW_GAS, UNION_RAW_DATA_HIGH_GAS } from "./shared.js";
+import { UNION_RAW_DATA_HIGH_GAS, UNION_RAW_DATA_LOW_GAS } from "./shared.js";
 export function display_histogram_winners(db) {
-  const winner_count_query =       `
+  const winner_count_query = `
       raw_data_filtered as (
       select * from raw_data where executed_buy_amount != 0 or name='cowswap'
       ),
@@ -39,14 +39,14 @@ export function display_histogram_winners(db) {
   }
   console.log(x_val);
   console.log(labels);
-   rows = db.query(
+  rows = db.query(
     UNION_RAW_DATA_HIGH_GAS + winner_count_query,
   );
   console.log(
     "Histogram of competition win per exchange (on bang for buck, considering gas costs, in high gas cost env):",
   );
- x_val = [];
-   labels = [];
+  x_val = [];
+  labels = [];
   for (let i = 0; i < rows.length; i++) {
     x_val.push(rows[i][1]);
     labels.push(rows[i][0]);

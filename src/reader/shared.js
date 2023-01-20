@@ -31,11 +31,11 @@ export const UNION_RAW_DATA = `with
         ), `;
 export const UNION_RAW_DATA_HIGH_GAS = UNION_RAW_DATA + ` raw_data as (
         select * from pre_raw_data prd inner join  parameters pa on pa.uid = prd.uid
-        where gas_price > 40
+        where gas_price > 30
       ),`;
 export const UNION_RAW_DATA_LOW_GAS = UNION_RAW_DATA + ` raw_data as (
         select * from pre_raw_data prd inner join parameters pa on pa.uid = prd.uid
-        where gas_price < 15
+        where gas_price < 30
       ),`;
 export const COLORS = [
   "#345C7D",

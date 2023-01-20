@@ -16,13 +16,13 @@ export function display_histogram_price_differences(db) {
       )
       select * from (
       select 
-      'price improvement in [0,0.0001]' as category, count(*) from winners_difference where price_improvement_over_second_best < 0.0001
+      '[0,0.0001]' as category, count(*) from winners_difference where price_improvement_over_second_best < 0.0001
       UNION
-      select 'price improvement in [0.0001, 0.001]' as category, count(*) from winners_difference where price_improvement_over_second_best > 0.0001 and price_improvement_over_second_best < 0.001
+      select '[0.0001,0.001]' as category, count(*) from winners_difference where price_improvement_over_second_best > 0.0001 and price_improvement_over_second_best < 0.001
       UNION
-      select 'price improvement in [0.001, 0.01]' as category, count(*) from winners_difference where price_improvement_over_second_best > 0.001 and price_improvement_over_second_best < 0.01
+      select '[0.001,0.01]' as category, count(*) from winners_difference where price_improvement_over_second_best > 0.001 and price_improvement_over_second_best < 0.01
       UNION
-      select 'price improvement in [0.01, 1]' as category, count(*) from winners_difference where price_improvement_over_second_best > 0.01 
+      select '[0.01,1]' as category, count(*) from winners_difference where price_improvement_over_second_best > 0.01 
       )`,
     [],
   );

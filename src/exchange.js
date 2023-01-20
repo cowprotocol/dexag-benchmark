@@ -99,11 +99,12 @@ export class Exchange {
 
     const eth_call_result = await eth_call_promise;
 
-    const [executedSellAmount, executedBuyAmount, gasUsed] =
-      this.trader.decodeFunctionResult("trade", eth_call_result);
+    const [executedSellAmount, executedBuyAmount, gasUsed] = this.trader
+      .decodeFunctionResult("trade", eth_call_result);
     const txInitiationGasAmount = 21000;
     const gasCostJumpIntoExchangeContract = 2100;
-    const realGasUsed = gasUsed + txInitiationGasAmount - gasCostJumpIntoExchangeContract ;
+    const realGasUsed = gasUsed + txInitiationGasAmount -
+      gasCostJumpIntoExchangeContract;
 
     return {
       uid: order.uid,
@@ -113,7 +114,7 @@ export class Exchange {
       executedBuyAmount,
       exchange: swap.exchange,
       data: swap.data,
-      gasCost: (realGasUsed* gasPrice) / ethPrice,
+      gasCost: (realGasUsed * gasPrice) / ethPrice,
     };
   }
 
@@ -135,7 +136,7 @@ export class Exchange {
         trade.data,
         feeUsd,
         outPutValueInDollar,
-      ]
+      ],
     );
   }
 
@@ -145,13 +146,13 @@ export class Exchange {
     block_number,
     etherPrice,
     buyTokenPrice,
-    sellTokenPrice
+    sellTokenPrice,
   ) {
     const swap = await this.trySwap(
       order,
       gasPrice,
       etherPrice,
-      sellTokenPrice
+      sellTokenPrice,
     );
     if (swap != null) {
       const feeUsd = swap.feeUsd;
@@ -160,7 +161,7 @@ export class Exchange {
         swap,
         block_number,
         gasPrice,
-        etherPrice
+        etherPrice,
       );
       let outPutValue = 0;
       if (this.name == "cowswap") {
