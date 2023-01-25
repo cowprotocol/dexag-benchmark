@@ -30,7 +30,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./data-collector/
-          file: Dockerfile
+          file: ./data-collector/Dockerfile
           push: true
           tags: ${{ steps.meta_data_collector.outputs.tags }}
           labels: ${{ steps.meta_data_collector.outputs.labels }}
