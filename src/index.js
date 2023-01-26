@@ -18,8 +18,8 @@ const db = new DB("orders.db");
 const provider = new ethers.providers.JsonRpcProvider(
   `https://mainnet.infura.io/v3/${Deno.env.get("INFURA_PROJECT_ID")}`,
 );
+const orderbook = new Orderbook(db, false);
 const parameterStore = new ParameterStore(db);
-const orderbook = new Orderbook(db, true);
 await setup_log(log);
 const exchanges = generateExchangeConfig(db, provider).filter((exchange) =>
   ["zeroex", "ocean", "oneinch", "paraswap", "cowswap"].includes(exchange.name)

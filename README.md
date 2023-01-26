@@ -27,4 +27,3 @@ aggregator.
 export INFURA_PROJECT_ID=<key>
 make run
 ```
-

@@ -41,7 +41,7 @@ export class Exchange {
     }
   }
 
-  async simulateTrade(order, swap, block_number, gasPrice) {
+  async simulateTrade(order, swap, block_number, gasPrice, ethPrice) {
     if (!swap) {
       return {
         uid: order.uid,
@@ -67,18 +67,19 @@ export class Exchange {
       };
     }
 
+    const data = this.trader.encodeFunctionData("trade", [
+      order.sellToken,
+      order.buyToken,
+      swap.spender,
+      swap.exchange,
+      swap.data,
+    ]);
     const eth_call_promise = this.provider
       .send("eth_call", [
         {
           from: order.owner,
           to: order.owner,
-          data: this.trader.encodeFunctionData("trade", [
-            order.sellToken,
-            order.buyToken,
-            swap.spender,
-            swap.exchange,
-            swap.data,
-          ]),
+          data: data,
         },
         block_number,
         {
@@ -90,7 +91,7 @@ export class Exchange {
       .catch((err) => {
         if (`${err.body}`.indexOf("execution reverted") >= 0) {
           log.warning(`${this.name} trade reverted`);
-          return this.trader.encodeFunctionResult("trade", [0, 0]);
+          return this.trader.encodeFunctionResult("trade", [0, 0, 0]);
         } else {
           throw err;
         }
@@ -98,9 +99,18 @@ export class Exchange {
 
     const eth_call_result = await eth_call_promise;
 
-    const [executedSellAmount, executedBuyAmount] = this.trader
+    const [executedSellAmount, executedBuyAmount, gasUsed] = this.trader
       .decodeFunctionResult("trade", eth_call_result);
+    const txInitiationGasAmount = ethers.BigNumber.from("21000");
+    const gasCostJumpIntoExchangeContract = ethers.BigNumber.from("2100");
+    console.log(gasUsed.toString())
 
+    const realGasUsed = gasUsed.add(txInitiationGasAmount.sub(
+      gasCostJumpIntoExchangeContract));
+
+    console.log(realGasUsed.toString())
+    console.log( swap.exchange, "simulation gas costs", (realGasUsed * gasPrice) / ethPrice );
+    console.log(swap.exchange, "provided gas costs", swap.feeUsd );
     return {
       uid: order.uid,
       sellAmount: swap.sellAmount,
@@ -109,7 +119,7 @@ export class Exchange {
       executedBuyAmount,
       exchange: swap.exchange,
       data: swap.data,
-      gasCost: swap.feeUsd,
+      gasCost: (realGasUsed * gasPrice) / ethPrice,
     };
   }
 
@@ -150,12 +160,13 @@ export class Exchange {
       sellTokenPrice,
     );
     if (swap != null) {
-      let feeUsd = swap.feeUsd;
+      const feeUsd = swap.feeUsd;
       const trade = await this.simulateTrade(
         order,
         swap,
         block_number,
         gasPrice,
+        etherPrice,
       );
       let outPutValue = 0;
       if (this.name == "cowswap") {
