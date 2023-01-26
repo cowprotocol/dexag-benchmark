@@ -101,11 +101,16 @@ export class Exchange {
 
     const [executedSellAmount, executedBuyAmount, gasUsed] = this.trader
       .decodeFunctionResult("trade", eth_call_result);
-    const txInitiationGasAmount = 21000;
-    const gasCostJumpIntoExchangeContract = 2100;
-    const realGasUsed = gasUsed + txInitiationGasAmount -
-      gasCostJumpIntoExchangeContract;
+    const txInitiationGasAmount = ethers.BigNumber.from("21000");
+    const gasCostJumpIntoExchangeContract = ethers.BigNumber.from("2100");
+    console.log(gasUsed.toString())
 
+    const realGasUsed = gasUsed.add(txInitiationGasAmount.sub(
+      gasCostJumpIntoExchangeContract));
+
+    console.log(realGasUsed.toString())
+    console.log( swap.exchange, "simulation gas costs", (realGasUsed * gasPrice) / ethPrice );
+    console.log(swap.exchange, "provided gas costs", swap.feeUsd );
     return {
       uid: order.uid,
       sellAmount: swap.sellAmount,
