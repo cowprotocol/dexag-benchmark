@@ -22,6 +22,7 @@ const dbPool = new Pool(
     password: Deno.env.get("POSTGRES_PASSWORD"),
     port: Deno.env.get("POSTGRES_PORT"),
     user: Deno.env.get("POSTGRES_USER"),
+    host_type: Deno.env.get("POSTGRES_HOST_TYPE"),
   },
   POOL_CONNECTIONS,
 );
