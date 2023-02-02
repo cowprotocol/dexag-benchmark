@@ -21,7 +21,7 @@ const node_config = {
   url: Deno.env.get("NODE_URL"),
   password: Deno.env.get("NODE_PASSWORD"),
   user: Deno.env.get("NODE_USER"),
-  forceInsecrure: true,
+  allowInsecureAuthentication: true,
 };
 const provider = new ethers.providers.JsonRpcProvider(node_config);
 
