@@ -163,20 +163,20 @@ export class Exchange {
         swap,
         block_number,
         gasPrice,
-        etherPrice
+        etherPrice,
       );
       let outPutValue = 0;
       if (this.name == "cowswap") {
         outPutValue = trade.buyAmount / buyTokenPrice;
       } else {
-        outPutValue =
-          trade.executedBuyAmount / buyTokenPrice - trade.feeUsdFromTrace;
+        outPutValue = trade.executedBuyAmount / buyTokenPrice -
+          trade.feeUsdFromTrace;
       }
       await this.storeTrade(
         trade,
         outPutValue,
         trade.feeUsdFromTraderContract,
-        trade.feeUsdFromTrace
+        trade.feeUsdFromTrace,
       );
       log.debug(`${this.name} processed ${order.uid}`);
     }
