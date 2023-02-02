@@ -79,12 +79,15 @@ export class Exchange {
         swap,
         block_number,
       );
-    const gasCostTraderContract = gasUsed == null ? null : (gasUsed * gasPrice) / ethPrice;
+    const gasCostTraderContract = gasUsed == null
+      ? null
+      : (gasUsed * gasPrice) / ethPrice;
     const gasCostTraceCall = estimation_result == null
       ? null
       : (parseInt(estimation_result.gas, 10) * gasPrice) / ethPrice;
     log.debug(
-      "gas costs from trader contract for tx on " + this.name + ": " + gasCostTraderContract,
+      "gas costs from trader contract for tx on " + this.name + ": " +
+        gasCostTraderContract,
     );
     log.debug(
       "gas costs from trace_call simulation on " +
