@@ -4,13 +4,10 @@ import src.shared
 
 
 diff_query = """
-raw_data_filtered as (
-      select * from raw_data where executed_buy_amount != 0 or name='cowswap'
-      ),
       ranked_by_ouput as(
       select uid, output_value_usd, name, gas_price, 
        rank() over( partition by uid order by output_value_usd DESC ) as rank
-       from raw_data_filtered
+       from raw_data
       ),
       winner as (
       select * from ranked_by_ouput where rank=1
@@ -20,7 +17,8 @@ raw_data_filtered as (
       where ro.name='cowswap'
       ),
       diff_categories as(
-      select (floor(diff/0.5) * 0.5)::TEXT as category,FLOOR(gas_price / 5000000000) * 5 as gas_price, output_value_usd from difference_to_cowswap where diff < 50
+      select floor(diff)::TEXT as category,FLOOR(gas_price / 5000000000) * 5 as gas_price, output_value_usd from difference_to_cowswap 
+      where diff < 50 
       )
       select * from diff_categories
 """
@@ -31,6 +29,12 @@ def get_diff_between_winner_and_cowswap_graph(conn):
     cursor.execute(src.shared.UNION_RAW_DATA_JOINED_WITH_PARAMETER + diff_query)
     data = pd.DataFrame(cursor.fetchall())
     data = data.rename(columns={0: "difference", 1: "gas_price", 2: "trade_value"})
+    # Sorting the data, such that the graphs are shown nicely
+    data['difference'] = data['difference'].astype(int)
+    data['gas_price'] = data['gas_price'].astype(int)
+    data.sort_values(['gas_price', 'difference'],ascending=[True, True],inplace=True)
+    data['difference'] = data['difference'].astype(object)
+    data['gas_price'] = data['gas_price'].astype(object)
     print(data)
     return px.bar(
         data,

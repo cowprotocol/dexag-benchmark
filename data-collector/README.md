@@ -13,19 +13,24 @@ contracts.
 
 ## How to run it:
 
-1. install deno
+1. Install deno
 
-2. copy .env.example to .env and fill out the variables
+2. Copy .env.example to .env and fill out the variables. If you wanna connect to the database on cowswaps AWS account, use the credentials from [1password](https://start.1password.com/open/i?a=6DWD777JFFEZZLYS6J4DUURYLE&v=weisopuq6vd4jkgfi443z2fe64&i=r7tfzgrrsv37l4b2etdco7ku2u&h=cowserviceslda.1password.com).
 
 ```
 cd data-collector
 export $(grep -v '^#' ../.env | xargs)
 ```
 
-2. run:
-
+2. Run:
 ```
 make run
+```
+
+3. for linting and formating, you can run:
+```
+deno lint
+deno fmt
 ```
 
 ## How to run it in docker:
