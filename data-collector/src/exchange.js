@@ -86,7 +86,9 @@ export class Exchange {
       ? null
       : (parseInt(estimation_result.gas, 10) * gasPrice) / ethPrice;
     log.debug(
-      "gas costs from trader contract for tx on " + this.name + ": " +
+      "gas costs from trader contract for tx on " +
+        this.name +
+        ": " +
         gasCostTraderContract,
     );
     log.debug(

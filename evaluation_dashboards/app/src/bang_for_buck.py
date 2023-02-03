@@ -3,16 +3,14 @@ import pandas as pd
 import src.shared
 
 
-bang_for_buck_query = """raw_data_filtered as (
-      select * from raw_data where executed_buy_amount != 0 or name='cowswap'
-      ),
+bang_for_buck_query = """
       result_count as (
-      select uid, count(*) as number_of_results from raw_data_filtered group by uid
+      select uid, count(*) as number_of_results from raw_data group by uid
       ),
       ranked_by_ouput as(
       select rf.uid, output_value_usd, name, gas_cost_usd_from_trace_callMany, gas_price,
        rank() over( partition by rf.uid order by output_value_usd DESC ) as rank
-       from raw_data_filtered rf left join result_count rc on rc.uid = rf.uid where rc.number_of_results > 2
+       from raw_data rf left join result_count rc on rc.uid = rf.uid where rc.number_of_results > 3
       ),
       winner as (
        select name, FLOOR(gas_price / 5000000000) * 5, output_value_usd from ranked_by_ouput where rank=1 
@@ -27,6 +25,10 @@ def get_bang_for_buck_graph(conn):
     )
     data = pd.DataFrame(cursor.fetchall())
     data = data.rename(columns={0: "exchange", 1: "gas_price", 2: "trade_value"})
+    # Sorting the data, such that the graphs are shown nicely
+    data['gas_price'] = data['gas_price'].astype(int)
+    data.sort_values(['gas_price', 'exchange'],ascending=[True, True],inplace=True)
+    data['gas_price'] = data['gas_price'].astype(object)
     print(data)
     return px.bar(
         data,
